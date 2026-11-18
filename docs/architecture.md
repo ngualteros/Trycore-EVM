@@ -10,9 +10,10 @@ SQLAlchemy utilizará su API síncrona y el driver Psycopg 3.
 o `backend/.env`. La configuración no se instancia al importar la aplicación: la salud funciona
 sin base de datos ni archivo `.env`.
 
-Los paquetes `services`, `models`, `schemas` y `evm` están vacíos deliberadamente.
-No hay engine, sesiones, entidades, tablas ni operaciones de negocio. SQLAlchemy y Psycopg
-están instalados para la siguiente etapa. El frontend muestra una pantalla inicial estática.
+`evm` contiene las fórmulas independientes y `models` contiene Project y Activity con
+SQLAlchemy síncrono. `db.py` administra engine y sesiones de forma diferida. Los paquetes
+`services` y `schemas` siguen reservados para la siguiente etapa. No hay endpoints CRUD.
+El frontend muestra una pantalla inicial estática. Véase [persistencia](database.md).
 
 ## Responsabilidades para las siguientes etapas
 
@@ -20,10 +21,10 @@ Flujo acordado: **Router → Service → SQLAlchemy**.
 
 - `routers/`: HTTP, validación y serialización mediante Pydantic.
 - `services/`: casos de uso, reglas y límites de transacción.
-- `models/`: entidades SQLAlchemy cuando se apruebe el modelo de datos.
+- `models/`: entidades SQLAlchemy, relaciones y validación de asignaciones.
 - `schemas/`: contratos Pydantic de entrada y salida.
 - `evm/`: funciones puras sin importar FastAPI ni SQLAlchemy.
-- Futuro `db.py`: engine síncrono y sesión por petición, cerrada al finalizar; sin sesiones
+- `db.py`: engine síncrono y generador de sesiones, cerradas al finalizar; sin sesiones
   globales compartidas ni creación automática de tablas al arrancar.
 
 Los handlers que accedan a persistencia síncrona utilizarán `def`. No se añade Repository
@@ -31,13 +32,12 @@ ni infraestructura asíncrona. La salud no necesita un servicio vacío.
 
 ## Pruebas y evolución
 
-Las pruebas actuales no necesitan PostgreSQL. El motor EVM tendrá pruebas unitarias de
-fórmulas y casos límite. La persistencia se probará contra una base PostgreSQL separada,
-con el marcador `integration`; nunca se usará la base de trabajo para pruebas destructivas.
-Todavía no existe infraestructura de pruebas de base de datos.
+El motor EVM tiene pruebas unitarias de fórmulas y casos límite. Las pruebas de persistencia
+usan PostgreSQL 17 separado, con el marcador `integration`, esquemas exclusivos y rollback;
+nunca usan la base de trabajo como alternativa. Sin TEST_DATABASE_URL se omiten explícitamente.
 
-El esquema se añadirá mediante SQL versionado cuando se definan las entidades; `init_db.sql`
-solo prepara una base vacía. No se incorpora Alembic ni Docker. La integración frontend/API,
+`init_db.sql` crea tablas y restricciones de forma repetible sin eliminar datos existentes;
+no migra esquemas preexistentes. No se incorpora Alembic ni Docker. La integración frontend/API,
 incluida la decisión de proxy o CORS, queda para la primera funcionalidad que la necesite.
 
 Cada incremento debe ser revisable en una rama `feature/*` basada en `develop`. La estructura

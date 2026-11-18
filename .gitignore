@@ -2,6 +2,7 @@
 # Local configuration (keep examples tracked)
 .env.*
 !.env.example
+!.env.test.example
 node_modules/
 
 # Local credentials and private key material (not public certificates)

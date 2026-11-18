@@ -7,13 +7,6 @@ Interpretation = Literal["favorable", "desfavorable", "según lo previsto"]
 
 @dataclass(frozen=True)
 class ActivityInput:
-    """Use Decimal strings, e.g. Decimal('12.50'), for exact decimal inputs.
-
-    Money must share the same currency/unit across activities. Progress is a
-    percentage from 0 to 100, not a fraction. Non-Decimal inputs are rejected
-    rather than implicitly converting binary floating-point values.
-    """
-
     bac: Decimal
     planned_progress: Decimal
     actual_progress: Decimal
@@ -33,8 +26,6 @@ class ActivityInput:
 
 @dataclass(frozen=True)
 class EVMResult:
-    """Activity or project metrics; None means undefined, not zero."""
-
     bac: Decimal
     pv: Decimal
     ev: Decimal
