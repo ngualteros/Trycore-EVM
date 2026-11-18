@@ -45,7 +45,7 @@ Trycore — AI/RPA Technical Challenge
 Actúa como mi mentor técnico, arquitecto de software y colaborador de desarrollo para resolver la prueba técnica de Trycore, cuyo documento oficial adjunto será mi fuente de requisitos.
 
 Objetivo
-Construir y entregar una aplicación fullstack de gestión de proyectos y Earned Value Management (EVM), cumpliendo los requisitos funcionales, técnicos, de testing, Gitflow y documentación establecidos por Trycore.
+Construir y entregar una aplicación fullstack de gestión de proyectos y Earned Value Management (EVM), cumpliendo los requisitos funcionales, técnicos, de testing, Gitflow y documentación establecidos por Trycore (PDF adjunto).
 
 Fecha límite: 19 de noviembre de 2026, antes de las 7:00 a. m. (Colombia).
 
@@ -999,62 +999,192 @@ No realices commits, pushes ni Pull Requests.
 Entrega un informe final con resultados, riesgos pendientes y una conclusión explícita sobre si la rama está lista para integrarse a develop.
 
 ## 4. Desacuerdos con IA (dos casos)
+
+### Desacuerdo 1 — Rechazo del uso de Docker y Alembic
+
+**Contexto:**
+Durante la planificación de la arquitectura, la IA planteó el uso de Docker para contenerizar la aplicación y Alembic para gestionar las migraciones de la base de datos. Sin embargo, consideré que estas herramientas añadían complejidad innecesaria para el alcance y los requisitos del desafío técnico.
+
+**Decisión que tomé:**
+Decidí no usar Docker ni Alembic. Opté por utilizar PostgreSQL instalado localmente, un script SQL (init_db.sql) para inicializar las tablas y ejecutar el backend y el frontend directamente desde sus respectivos entornos de desarrollo.
+
+**Justificación técnica:**
+Mi decisión se basó en priorizar una solución sencilla, funcional y mantenible, teniendo en cuenta el tiempo disponible para completar el desafío. Aunque Docker y Alembic son herramientas útiles en proyectos de mayor escala, no eran indispensables para implementar en este caso.
+
+**Resultado:**
+La aplicación se implementó utilizando React, FastAPI y PostgreSQL local, con un script SQL reproducible para la inicialización de la base de datos. Se completaron las funcionalidades requeridas y las pruebas automatizadas sin necesidad de incorporar Docker ni Alembic.
+
+### Desacuerdo 2 Rechazo de una corrección automática de dependencias
+
+**Contexto:**
+Durante la configuración del frontend, la herramienta npm audit identificó cinco avisos de seguridad en dependencias en herramientas de desarrollo.
+La corrección automática propuesta implicaba modificar versiones mayores de algunas dependencias, lo que podía introducir incompatibilidades o afectar la estabilidad del proyecto.
+
+**Decisión que tomé:**
+Decidí no aplicar npm audit fix --force automáticamente. En su lugar, solicité revisar las dependencias afectadas, analizar su impacto y documentar las vulnerabilidades conocidas.
+
+**Justificación técnica:**
+Consideré que una actualización mayor automática podía introducir riesgos de compatibilidad sin garantizar una solución adecuada. Preferí mantener las versiones utilizadas, verificar el funcionamiento de la aplicación y registrar los riesgos pendientes para una corrección posterior controlada.
+
+**Resultado:**
+Se conservaron las dependencias, se completaron las verificaciones funcionales y los avisos quedaron documentados. No se presentaron las vulnerabilidades como corregidas.
+
 ## 5. Decisión arquitectónica independiente
+
+**Contexto:**
+
+Después de analizar los requisitos del desafío técnico y estudiar los fundamentos de Earned Value Management (EVM), evalué las alternativas arquitectónicas para desarrollar la aplicación.
+
+Durante esta etapa se consideró una arquitectura basada en microservicios, que consiste en dividir una aplicación en servicios independientes que se comunican entre sí. Aunque este enfoque ofrece ventajas de escalabilidad y despliegue independiente, también requiere una mayor complejidad de configuración, comunicación y mantenimiento.
+
+**Decisión que tomé:**
+Después de evaluar el alcance, las funcionalidades requeridas y el tiempo disponible, decidí implementar una arquitectura monolítica modular, manteniendo el frontend, el backend y la Base de datos en PostgreSQL.
+
+**Justificación técnica:**
+
+Consideré que una arquitectura de microservicios sería excesiva para una aplicación de este tamaño, ya que incorporaría complejidad de infraestructura y comunicación sin aportar beneficios significativos para los requisitos del desafío.
+
+La arquitectura monolítica modular me permitió mantener el código organizado, facilitar las pruebas y simplificar la integración entre los componentes, sin sacrificar la posibilidad de ampliar el sistema posteriormente.
+
+**Resultado:**
+
+La aplicación se desarrolló con un backend modular en FastAPI, un frontend independiente en React y una base de datos PostgreSQL. El motor EVM quedó desacoplado de la API, permitiendo probar los cálculos de manera independiente.
+
+Esta decisión permitió completar e integrar las funcionalidades principales, manteniendo una arquitectura sencilla, organizada y adecuada para el alcance del proyecto.
+
 ## 6. Aprendizaje y validación EVM
+
+**Proceso de aprendizaje:**
+Antes de comenzar con la implementación, consideré importante comprender correctamente el concepto de Earned Value Management (EVM), ya que no había trabajado directamente con esta metodología.
+
+Inicialmente, investigué en internet para conocer sus fundamentos, en qué área de la gestión de proyectos se utiliza, cuál es su propósito y por qué es importante para el seguimiento de presupuestos, costos y cronogramas. Complementé esta investigación con los requisitos y las fórmulas incluidas en el PDF proporcionado por Trycore.
+
+Una vez tuve una comprensión general del tema, utilicé ChatGPT como herramienta de aprendizaje. Le solicité que me explicara EVM desde los conceptos más básicos, utilizando un lenguaje sencillo y ejemplos prácticos, como si estuviera estudiando la metodología por primera vez.
+
+Profundicé especialmente en los indicadores BAC, PV, EV, AC, CV, SV, CPI, SPI, EAC y VAC, buscando comprender no solamente sus fórmulas, sino también qué representa cada uno, cómo se relacionan y cómo interpretar sus resultados dentro de un proyecto real.
+
+Adicionalmente, consulté videos educativos en YouTube donde se explicaban los conceptos y se desarrollaban ejercicios prácticos. Esto me permitió complementar las explicaciones de ChatGPT con otras fuentes y entender mejor cómo se aplica EVM en situaciones empresariales.
+
+**Validación de mi comprensión:**
+Para comprobar lo aprendido, solicité a ChatGPT ejemplos numéricos con diferentes actividades, presupuestos, porcentajes de avance y costos ejecutados. Revisé cómo se obtenían los indicadores individuales y cómo debían consolidarse los resultados a nivel de proyecto.
+
+Uno de los puntos más importantes fue comprender que los indicadores CPI y SPI consolidados deben calcularse utilizando los valores totales del proyecto, en lugar de promediar los índices individuales de las actividades.
+
+**Aplicación de lo aprendido:**
+Con estos fundamentos, pude definir las reglas que debía implementar el motor EVM y los resultados esperados para las pruebas unitarias.
+
 ## 7. Verificaciones y resultados
-## 8. Limitaciones conocidas
-## 9. Reflexión final
 
+Durante el desarrollo realicé diferentes verificaciones para comprobar que la aplicación cumpliera los requisitos funcionales y técnicos del desafío. Mi objetivo fue no depender únicamente de los resultados generados por la IA, sino contrastarlos mediante pruebas automatizadas y comprobaciones manuales.
 
+**7.1. Motor de cálculo EVM**
 
+Para validar la lógica de negocio, utilicé pytest y pytest-cov, ejecutados mediante Codex. El motor EVM alcanzó los siguientes resultados:
 
+- 74 pruebas específicas aprobadas.
+- 100% de cobertura de líneas y ramas reportada para el motor EVM.
+- Validación de cálculos individuales y consolidados.
+- Pruebas de entradas inválidas, porcentajes fuera de rango y valores monetarios negativos.
+- Comprobación de casos especiales como divisiones por cero e indicadores indefinidos.
 
+**7.2. Base de datos PostgreSQL**
 
+Para validar la persistencia, configuré PostgreSQL localmente y creé dos bases independientes:
 
+- trycore_evm: base de datos de desarrollo.
 
-# Registro de asistencia de IA
+- trycore_evm_test: base utilizada para pruebas automatizadas.
 
-## 2026-11-17 — Configuración inicial
+Mediante Codex ejecuté pruebas de integración sobre una base aislada, verificando:
 
-El usuario pidió inspeccionar el repositorio y presentar una propuesta sin cambios.
-La inspección encontró `README.md`, un `.gitignore` de Python y las ramas `main`, `develop` y
-`feature/project-setup` en el commit inicial. Se presentó un plan para revisión.
+- Creación y consulta de proyectos y actividades.
+- Relaciones entre tablas.
+- Integridad referencial.
+- Eliminación en cascada.
+- Precisión de valores Decimal.
+- Restricciones de presupuestos y porcentajes.
+- Equivalencia entre los modelos SQLAlchemy y el esquema SQL.
 
-El usuario aprobó la arquitectura con ajustes explícitos: JavaScript/JSX, PostgreSQL local,
-inicialización SQL sin Alembic, `requirements.txt`, pytest, pytest-cov y Ruff. Autorizó
-el endpoint de salud, Swagger en `/api-docs`, una pantalla mínima y documentación de Windows.
-Prohibió entidades, CRUD, fórmulas EVM, tablas, autenticación, Docker, commits y Pull Requests.
+Las 68 pruebas específicas de persistencia finalizaron correctamente.
 
-La IA creó el esqueleto del backend, pruebas de infraestructura, configuración de herramientas,
-script de base vacía y documentación. Generó el frontend con la plantilla oficial
-`create-vite@9.3.4` para React y sustituyó la demostración por una pantalla mínima.
-La plantilla incluye Oxlint para JavaScript/JSX.
+**7.3. API REST con FastAPI**
 
-Las primeras consultas a npm y la instalación con pip fallaron por restricciones de red del
-sandbox. Se solicitaron ejecuciones con permisos ampliados para descargar las dependencias.
-No se cambió la configuración global de Git: la inspección usó `safe.directory` limitado al
-comando debido a una diferencia de propietario del repositorio.
+La implementación de la API incorporó 12 endpoints para gestionar proyectos, actividades y consultar indicadores EVM.
 
-Los resultados de las verificaciones se registran después de ejecutarlas. Este archivo no
-describe trabajo anterior a esta conversación ni supone aprobación humana de los cambios finales.
+Codex ejecutó pruebas automatizadas de integración HTTP, incluyendo operaciones CRUD, validaciones, errores y consultas de indicadores.
 
-### Verificaciones ejecutadas
+Al finalizar esta fase, la suite del backend reportó:
 
-- `python -m pip check` dentro del entorno virtual: sin dependencias incompatibles.
-- `python -m pytest`: 3 pruebas aprobadas; cobertura del 100% de las 18 sentencias actuales.
-  Starlette emitió una advertencia de deprecación del uso de `httpx` en TestClient.
-- `python -m ruff check .`: aprobado.
-- `python -m ruff format --check .`: 11 archivos con formato correcto.
-- `npm.cmd run lint`: aprobado con Oxlint.
-- `npm.cmd run build`: aprobado con Vite 8.3.8.
-- Se arrancaron temporalmente Uvicorn y Vite en los puertos 18000 y 15173 y se comprobaron
-  respuestas HTTP 200, JSON de salud y contenido del frontend. Ambos procesos se detuvieron.
-  No se realizó inspección visual en navegador.
-- `npm.cmd audit --json`: 5 avisos de severidad alta en la cadena de herramientas de desarrollo
-  (`picomatch`, `fdir`, `tinyglobby`, `vite` y `@vitejs/plugin-react`), originados en
-  GHSA-fc5q-39xc-vjpf. El registro consultado ofrece `picomatch` 4.0.7 como última versión,
-  incluida en el rango vulnerable. La corrección automática propone bajar versiones mayores
-  de Vite/plugin; no se aplicó `audit fix --force`. Los avisos permanecen pendientes.
-- No se encontró `psql` en PATH ni la carpeta habitual `C:\Program Files\PostgreSQL`.
-  No se ejecutó `database/init_db.sql` ni se verificó una conexión PostgreSQL.
-- Git mantiene la rama `feature/project-setup`. No se crearon commits ni Pull Requests.
+- 297 pruebas aprobadas.
+- Ninguna prueba omitida.
+- 100% de cobertura de líneas reportada.
+- Verificaciones Ruff y Ruff Format satisfactorias.
+
+**7.4. Frontend React**
+
+Para validar la interfaz ejecuté FastAPI mediante Uvicorn y el frontend mediante Vite. Codex realizó las siguientes verificaciones:
+
+- 27 pruebas frontend aprobadas con Vitest.
+- Una prueba adicional de integración React–FastAPI utilizando PostgreSQL aislado.
+- Oxlint sin errores ni advertencias.
+- Compilación de producción de Vite correcta.
+- Suite backend de 297 pruebas aprobadas.
+ 
+Posteriormente, abrí la aplicación en Chrome y comprobé manualmente:
+
+- Visualización de proyectos existentes.
+- Presentación de indicadores EVM consolidados.
+- Tabla de actividades.
+- Gráfica comparativa de PV, EV y AC.
+- Creación, edición y eliminación de actividades.
+- Actualización automática de indicadores, tabla y gráfica después de modificar los datos.
+
+Las operaciones realizadas funcionaron correctamente y los resultados coincidieron con los obtenidos anteriormente en Swagger.
+
+**7.5. Control de versiones**
+
+Organicé el desarrollo mediante Gitflow, utilizando las ramas main, develop y feature para separar las funcionalidades.
+
+Realicé commits y Pull Requests para incorporar progresivamente la configuración inicial, el motor EVM, la persistencia y la API REST.
+
+Antes de integrar cada funcionalidad, revisé los resultados de las pruebas y las verificaciones de calidad reportadas por Codex.
+
+La validación final de la rama frontend también confirmó que no se estaban incluyendo credenciales locales ni archivos sensibles en los cambios preparados para Git.
+
+## 8. Limitaciones conocidas y Reflexión
+
+Durante el desarrollo identifiqué algunas limitaciones y posibles mejoras que considero importantes para una evolución futura de la aplicación.
+
+**8.1. Ejecución local**
+
+La aplicación fue desarrollada y validada en un entorno local utilizando FastAPI, React y PostgreSQL.
+
+No implementé una infraestructura de despliegue en la nube ni contenerización con Docker, ya que el objetivo principal era entregar una solución funcional y verificable dentro del alcance del desafío.
+
+Para utilizarla en producción sería necesario definir una estrategia de despliegue, configuración de entornos y administración de infraestructura.
+
+**8.2. Seguridad y autenticación**
+
+La aplicación no incluye autenticación ni gestión de roles y permisos.
+
+Esta funcionalidad no fue incorporada porque no formaba parte del alcance establecido para el desafío. Sin embargo, sería necesaria antes de exponer la aplicación a usuarios externos en un entorno productivo.
+
+**8.6. Precisión y límites numéricos**
+
+Para conservar precisión monetaria, el motor EVM utiliza Decimal y PostgreSQL almacena los importes mediante campos NUMERIC.
+
+La base de datos establece límites de precisión y escala que deben respetarse al registrar presupuestos, costos y porcentajes.
+
+### Reflexión final
+
+El desarrollo de este desafío fue una oportunidad para aplicar y fortalecer mis conocimientos en ingeniería de software, programación, automatización y desarrollo de aplicaciones fullstack.
+
+Uno de los principales retos fue comprender Earned Value Management (EVM), una metodología con la que no había trabajado directamente. Para ello, investigué sus fundamentos y utilicé ChatGPT como apoyo para comprender los indicadores, sus fórmulas y su aplicación en escenarios empresariales.
+
+Durante el proyecto utilicé ChatGPT para analizar requisitos, evaluar alternativas y tomar decisiones técnicas, mientras que Codex me apoyó en la implementación, revisión del código y ejecución de pruebas automatizadas.
+
+Considero que uno de los aprendizajes más importantes fue la necesidad de mantener un criterio propio frente a las recomendaciones de IA, evaluando aspectos como la complejidad arquitectónica, las tecnologías utilizadas y la mantenibilidad de la solución.
+
+También reforcé mis conocimientos en FastAPI, React, PostgreSQL, testing y Gitflow, especialmente durante la integración de los componentes y las validaciones funcionales realizadas manualmente.
+
+Mi principal conclusión es que la Inteligencia Artificial puede acelerar significativamente el desarrollo de software, pero no reemplaza el análisis, el criterio técnico ni la validación humana. El verdadero valor está en saber utilizarla como herramienta de apoyo para construir soluciones funcionales, comprender las decisiones tomadas y garantizar la calidad de los resultados.
