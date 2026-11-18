@@ -8,8 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Activity, Base, Project
 
-from .conftest import INIT_SQL
-from .support import schema_signature
+from .support import INIT_SQL, schema_signature
 
 pytestmark = pytest.mark.integration
 

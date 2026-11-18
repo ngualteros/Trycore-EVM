@@ -11,8 +11,9 @@ o `backend/.env`. La configuración no se instancia al importar la aplicación: 
 sin base de datos ni archivo `.env`.
 
 `evm` contiene las fórmulas independientes y `models` contiene Project y Activity con
-SQLAlchemy síncrono. `db.py` administra engine y sesiones de forma diferida. Los paquetes
-`services` y `schemas` siguen reservados para la siguiente etapa. No hay endpoints CRUD.
+SQLAlchemy síncrono. `db.py` administra engine y sesiones de forma diferida. `services`
+coordina CRUD y EVM; `schemas` valida entradas y salidas Pydantic. Los routers exponen
+los doce endpoints de proyectos, actividades e indicadores descritos en [api.md](api.md).
 El frontend muestra una pantalla inicial estática. Véase [persistencia](database.md).
 
 ## Responsabilidades para las siguientes etapas
@@ -27,7 +28,7 @@ Flujo acordado: **Router → Service → SQLAlchemy**.
 - `db.py`: engine síncrono y generador de sesiones, cerradas al finalizar; sin sesiones
   globales compartidas ni creación automática de tablas al arrancar.
 
-Los handlers que accedan a persistencia síncrona utilizarán `def`. No se añade Repository
+Los handlers que acceden a persistencia síncrona utilizan `def`. No se añade Repository
 ni infraestructura asíncrona. La salud no necesita un servicio vacío.
 
 ## Pruebas y evolución

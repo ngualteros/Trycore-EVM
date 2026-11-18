@@ -2,7 +2,7 @@
 
 Aplicación fullstack de gestión de proyectos con indicadores Earned Value Management.
 El backend incluye API de salud, Swagger UI, motor EVM independiente y modelos de persistencia
-PostgreSQL para proyectos y actividades. El frontend conserva la pantalla inicial; no hay endpoints CRUD.
+PostgreSQL para proyectos y actividades, CRUD REST e indicadores EVM. El frontend conserva la pantalla inicial.
 
 ## Requisitos locales
 
@@ -30,6 +30,7 @@ Copy-Item .env.example .env
 - Salud: <http://127.0.0.1:8000/health>, devuelve `{"status":"ok"}`.
 - Swagger UI: <http://127.0.0.1:8000/api-docs>.
 - OpenAPI: <http://127.0.0.1:8000/openapi.json>.
+- CRUD e indicadores: `/api/projects`. Véase [contrato y ejemplos REST](docs/api.md).
 
 `/health` comprueba que la aplicación responde; no verifica PostgreSQL. Swagger carga
 recursos desde un CDN y necesita internet en el navegador. Editar `backend/.env` con las
@@ -89,7 +90,7 @@ Desde `backend/`:
 ```
 
 pytest incluye cobertura de `app/` con pytest-cov. Las pruebas de salud, configuración, EVM
-y validación ORM no requieren PostgreSQL. Las de persistencia necesitan TEST_DATABASE_URL
+y validación ORM no requieren PostgreSQL. Las de persistencia y HTTP necesitan TEST_DATABASE_URL
 en el entorno o `backend/.env.test`; sin ella se omiten. Véase [aislamiento de pruebas](docs/database.md).
 
 Desde `frontend/`:
@@ -119,7 +120,7 @@ TestClient. Consultar `AI_PROCESS.md` para los resultados y límites de las veri
 - `docs/architecture.md`: responsabilidades y evolución prevista.
 - `AI_PROCESS.md`: registro verificable de la asistencia de IA en esta etapa.
 
-La persistencia se desarrolla en `feature/database-models`. Las futuras ramas `feature/*` se crearán
+La API REST se desarrolla en `feature/rest-api`. Las futuras ramas `feature/*` se crearán
 desde `develop` y se integrarán en ella tras revisión; `main` se reserva para entregas.
 Esta preparación no crea commits ni Pull Requests. El enunciado completo del desafío no está
 incluido; su cobertura deberá revisarse cuando esté disponible.

@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 from uuid import uuid4
 
 import pytest
@@ -8,11 +7,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
 from app.models import Base
-
-from .support import validate_test_url
-
-BACKEND = Path(__file__).resolve().parents[2]
-INIT_SQL = (BACKEND.parent / "database" / "init_db.sql").read_text(encoding="utf-8")
+from tests.persistence.support import BACKEND, INIT_SQL, validate_test_url
 
 
 @pytest.fixture(scope="session")
@@ -25,6 +20,7 @@ def test_engine():
         "DATABASE_URL"
     )
     url = validate_test_url(value, development)
+    assert url.database == "trycore_evm_test", "Only trycore_evm_test is allowed"
     engine = create_engine(
         url, hide_parameters=True, connect_args={"connect_timeout": 5}
     )

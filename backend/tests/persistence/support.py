@@ -1,7 +1,12 @@
 """Safety checks and schema inspection shared by persistence tests."""
 
+from pathlib import Path
+
 from sqlalchemy import inspect
 from sqlalchemy.engine import make_url
+
+BACKEND = Path(__file__).resolve().parents[2]
+INIT_SQL = (BACKEND.parent / "database" / "init_db.sql").read_text(encoding="utf-8")
 
 
 def validate_test_url(value: str, development_url: str | None = None):
