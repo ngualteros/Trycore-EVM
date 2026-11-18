@@ -18,8 +18,8 @@ Retirar una actividad de la colección ORM también la elimina; no puede quedar 
 
 `app/db.py` construye el engine y la fábrica de sesiones de forma diferida y reutilizable.
 Importar FastAPI no lee credenciales obligatoriamente ni conecta a PostgreSQL. El generador
-`get_session()` cierra la sesión incluso en caso de error, sin commit implícito. El futuro
-servicio controlará la transacción mediante `session.begin()` o commit/rollback explícitos.
+`get_session()` cierra la sesión incluso en caso de error, sin commit implícito. Los servicios
+controlan las escrituras mediante commit y rollback explícitos ante errores SQLAlchemy.
 Cambiar DATABASE_URL requiere reiniciar el proceso para renovar los recursos cacheados.
 
 ## Precisión y validación
@@ -34,8 +34,8 @@ Cambiar DATABASE_URL requiere reiniciar el proceso para renovar los recursos cac
 - Las restricciones SQL protegen valores almacenados, incluyendo NULL, NaN y rangos.
   PostgreSQL redondea entradas con escala excesiva antes de comprobar CHECK: SQL directo
   podría convertir `-0.001` a `0.00` o `100.001` a `100.00`. Las escrituras Core/SQL omiten
-  los validadores ORM. Deben recibir valores previamente validados; la futura API deberá
-  aplicar también la política de dos decimales antes de persistir.
+  los validadores ORM. Deben recibir valores previamente validados; la API aplica también
+  la política de dos decimales antes de persistir mediante schemas Pydantic.
 - No se deben redondear los indicadores EVM a dos decimales durante el cálculo. La escala
   de almacenamiento corresponde a las entradas, no a los resultados derivados.
 
@@ -93,9 +93,9 @@ Desde `backend/`:
 ```
 
 Las pruebas de integración leen TEST_DATABASE_URL del entorno o `.env.test`, nunca usan
-DATABASE_URL como alternativa. El nombre debe acabar en `_test` y diferir del nombre de la
-base de desarrollo cuando esta esté configurada. Usar exclusivamente una base de pruebas:
-el sufijo es una protección adicional, no determina por sí mismo el propósito de una base.
+DATABASE_URL como alternativa. La suite exige el nombre exacto `trycore_evm_test`, distinto
+de la base de desarrollo cuando esta esté configurada. El helper genérico conserva además
+la validación del sufijo `_test`. Nunca configurar esa base como entorno de desarrollo.
 
 Cada prueba crea un esquema con UUID dentro de una transacción externa, configura un
 search_path local y usa savepoints para que los commits ORM no confirmen esa transacción.
