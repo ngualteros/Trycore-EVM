@@ -8,7 +8,6 @@ HUNDRED = Decimal("100")
 
 
 def interpret_index(index: Decimal | None) -> Interpretation | None:
-    """Interpret CPI or SPI relative to one; undefined remains None."""
     if index is None:
         return None
     if not isinstance(index, Decimal):
@@ -64,11 +63,6 @@ def calculate_activity(activity: ActivityInput) -> EVMResult:
 
 
 def calculate_project(activities: Iterable[ActivityInput]) -> EVMResult:
-    """Aggregate amounts first, then calculate indices (never average them).
-
-    Accepts single-pass iterables. An empty collection has zero totals and
-    undefined indices, estimates and interpretations.
-    """
     bac = pv = ev = ac = ZERO
     for activity in activities:
         bac += activity.bac

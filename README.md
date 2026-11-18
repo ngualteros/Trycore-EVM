@@ -1,8 +1,8 @@
 # Trycore EVM
 
 Aplicación fullstack de gestión de proyectos con indicadores Earned Value Management.
-Esta rama contiene solo la configuración inicial: API de salud, Swagger UI, pantalla React
-y herramientas. No hay entidades, tablas, CRUD ni cálculos EVM.
+El backend incluye API de salud, Swagger UI, motor EVM independiente y modelos de persistencia
+PostgreSQL para proyectos y actividades. El frontend conserva la pantalla inicial; no hay endpoints CRUD.
 
 ## Requisitos locales
 
@@ -10,7 +10,7 @@ y herramientas. No hay entidades, tablas, CRUD ni cálculos EVM.
 - Python 3.12 (entorno utilizado: 3.12.7).
 - Node.js 22.12+ o posterior compatible con Vite (entorno utilizado: 26.13.1).
 - npm (entorno utilizado: 11.20.0).
-- PostgreSQL local, con el servicio iniciado, para preparar la base de datos.
+- PostgreSQL 17.12 local, con el servicio iniciado, para preparar la base de datos.
 
 La API de salud y el frontend arrancan sin PostgreSQL. Los comandos parten de la raíz
 del repositorio salvo indicación contraria. Se usa `npm.cmd` y el ejecutable del entorno
@@ -33,29 +33,29 @@ Copy-Item .env.example .env
 
 `/health` comprueba que la aplicación responde; no verifica PostgreSQL. Swagger carga
 recursos desde un CDN y necesita internet en el navegador. Editar `backend/.env` con las
-credenciales locales antes de añadir persistencia. La configuración está preparada,
-pero todavía no se crea un engine ni una sesión.
+credenciales locales antes de usar persistencia. El engine y las sesiones se crean de forma
+diferida; no se crean tablas automáticamente al arrancar.
 
 ## PostgreSQL local
 
-`database/init_db.sql` crea únicamente la base vacía `trycore_evm` si no existe.
-Está escrito para **psql** porque utiliza `\gexec`; no ejecutarlo directamente en el
-Query Tool de pgAdmin. No crea tablas ni modifica bases existentes.
+`database/init_db.sql` crea las tablas `projects` y `activities`, restricciones y relaciones
+en una base ya existente. No borra datos. Consultar [configuración de PostgreSQL](docs/database.md)
+para crear usuarios y bases separados de desarrollo/pruebas y configurar credenciales locales.
 
 Desde la raíz, con `psql` en PATH:
 
 ```powershell
-psql -h localhost -p 5432 -U postgres -d postgres -W -v ON_ERROR_STOP=1 -f database/init_db.sql
+psql -X -h localhost -p 5432 -U trycore_app -d trycore_evm -W -1 -v ON_ERROR_STOP=1 -f database/init_db.sql
 ```
 
 Si `psql` no está en PATH, usar su ruta real, por ejemplo:
 
 ```powershell
-& 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -h localhost -p 5432 -U postgres -d postgres -W -v ON_ERROR_STOP=1 -f database/init_db.sql
+& 'D:\Programas\Postgres\bin\psql.exe' -X -h localhost -p 5432 -U trycore_app -d trycore_evm -W -1 -v ON_ERROR_STOP=1 -f database/init_db.sql
 ```
 
-Reemplazar `18` por la carpeta de la versión instalada. El usuario debe poder crear bases
-de datos. `-W` solicita la contraseña sin guardarla en el comando. En `DATABASE_URL`, codificar
+Adaptar la ruta a la instalación local. El usuario debe poder crear tablas en la base
+seleccionada. `-W` solicita la contraseña sin guardarla en el comando. En `DATABASE_URL`, codificar
 los caracteres reservados de la contraseña como componentes de URL. No versionar `.env`.
 
 ## Frontend
@@ -88,8 +88,9 @@ Desde `backend/`:
 .\.venv\Scripts\python.exe -m ruff format --check .
 ```
 
-pytest incluye cobertura de `app/` con pytest-cov. Las pruebas iniciales comprueban salud,
-OpenAPI y lectura de configuración, sin conectarse a una base de datos.
+pytest incluye cobertura de `app/` con pytest-cov. Las pruebas de salud, configuración, EVM
+y validación ORM no requieren PostgreSQL. Las de persistencia necesitan TEST_DATABASE_URL
+en el entorno o `backend/.env.test`; sin ella se omiten. Véase [aislamiento de pruebas](docs/database.md).
 
 Desde `frontend/`:
 
@@ -111,14 +112,14 @@ TestClient. Consultar `AI_PROCESS.md` para los resultados y límites de las veri
 
 ## Organización y Git
 
-- `backend/app/`: API, configuración y paquetes reservados para las capas futuras.
-- `backend/tests/`: pruebas de infraestructura inicial.
+- `backend/app/`: API, configuración, motor EVM y modelos SQLAlchemy.
+- `backend/tests/`: pruebas unitarias y de persistencia aislada.
 - `frontend/`: React + Vite con JavaScript/JSX.
-- `database/`: inicialización manual de PostgreSQL, sin tablas.
+- `database/`: inicialización manual de tablas PostgreSQL.
 - `docs/architecture.md`: responsabilidades y evolución prevista.
 - `AI_PROCESS.md`: registro verificable de la asistencia de IA en esta etapa.
 
-El trabajo permanece en `feature/project-setup`. Las futuras ramas `feature/*` se crearán
+La persistencia se desarrolla en `feature/database-models`. Las futuras ramas `feature/*` se crearán
 desde `develop` y se integrarán en ella tras revisión; `main` se reserva para entregas.
 Esta preparación no crea commits ni Pull Requests. El enunciado completo del desafío no está
 incluido; su cobertura deberá revisarse cuando esté disponible.
