@@ -12,5 +12,4 @@ class HealthResponse(BaseModel):
 
 @router.get("/health", response_model=HealthResponse)
 def health_check() -> HealthResponse:
-    """Report application liveness without accessing the database."""
     return HealthResponse()

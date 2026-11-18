@@ -8,7 +8,6 @@ from app.schemas.projects import Name
 
 
 def require_decimal_string(value: object) -> object:
-    """JSON numbers may already have lost precision before validation."""
     if not isinstance(value, (str, Decimal)):
         raise ValueError("Decimal values must be supplied as strings")
     return value

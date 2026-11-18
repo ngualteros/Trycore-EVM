@@ -1,5 +1,3 @@
-"""Safety checks and schema inspection shared by persistence tests."""
-
 from pathlib import Path
 
 from sqlalchemy import inspect

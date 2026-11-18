@@ -14,7 +14,9 @@ sin base de datos ni archivo `.env`.
 SQLAlchemy síncrono. `db.py` administra engine y sesiones de forma diferida. `services`
 coordina CRUD y EVM; `schemas` valida entradas y salidas Pydantic. Los routers exponen
 los doce endpoints de proyectos, actividades e indicadores descritos en [api.md](api.md).
-El frontend muestra una pantalla inicial estática. Véase [persistencia](database.md).
+El frontend consume esos endpoints mediante un servicio HTTP centralizado y ofrece CRUD,
+indicadores y gráfica. No replica el motor EVM. Véanse [persistencia](database.md) y
+[dashboard](frontend.md).
 
 ## Responsabilidades para las siguientes etapas
 
@@ -38,8 +40,8 @@ usan PostgreSQL 17 separado, con el marcador `integration`, esquemas exclusivos 
 nunca usan la base de trabajo como alternativa. Sin TEST_DATABASE_URL se omiten explícitamente.
 
 `init_db.sql` crea tablas y restricciones de forma repetible sin eliminar datos existentes;
-no migra esquemas preexistentes. No se incorpora Alembic ni Docker. La integración frontend/API,
-incluida la decisión de proxy o CORS, queda para la primera funcionalidad que la necesite.
+no migra esquemas preexistentes. No se incorpora Alembic ni Docker. React usa el proxy de
+Vite para `/api` en desarrollo; no se amplía CORS del backend.
 
 Cada incremento debe ser revisable en una rama `feature/*` basada en `develop`. La estructura
 permite incorporar persistencia, servicios, EVM y pantallas por separado. No se afirma
