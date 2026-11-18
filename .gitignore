@@ -1,4 +1,32 @@
 # Byte-compiled / optimized / DLL files
+# Local configuration (keep examples tracked)
+.env.*
+!.env.example
+node_modules/
+
+# Local credentials and private key material (not public certificates)
+credentials.json
+credentials.local.json
+secrets.json
+secrets.local.json
+.aws/
+.ssh/
+*.key
+*.p12
+*.pfx
+*.private.pem
+id_rsa
+id_ed25519
+
+# Windows/editor artifacts and local database exports
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.swo
+*.sql.local
+*.dump
+
 __pycache__/
 *.py[codz]
 *$py.class
