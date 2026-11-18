@@ -8,8 +8,6 @@ from app.main import app
 
 @pytest.fixture
 def client(database):
-    """Real PostgreSQL per request, with commits contained by the outer rollback."""
-
     def override_session():
         with Session(
             bind=database[0], join_transaction_mode="create_savepoint"

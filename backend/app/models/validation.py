@@ -1,5 +1,3 @@
-"""Validate ORM assignments before PostgreSQL can round NUMERIC values."""
-
 from decimal import Decimal
 
 MAX_MONEY = Decimal("99999999999999.99")

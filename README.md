@@ -2,7 +2,8 @@
 
 Aplicación fullstack de gestión de proyectos con indicadores Earned Value Management.
 El backend incluye API de salud, Swagger UI, motor EVM independiente y modelos de persistencia
-PostgreSQL para proyectos y actividades, CRUD REST e indicadores EVM. El frontend conserva la pantalla inicial.
+PostgreSQL para proyectos y actividades, CRUD REST e indicadores EVM. El frontend ofrece un
+dashboard responsive con gestión de proyectos/actividades, indicadores, tabla y gráfica comparativa.
 
 ## Requisitos locales
 
@@ -70,9 +71,11 @@ Copy-Item .env.example .env
 npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort
 ```
 
-Abrir <http://127.0.0.1:5173>. La pantalla es estática; todavía no hace peticiones a la API.
-`VITE_API_BASE_URL` queda reservado para esa integración. Las variables `VITE_*` son públicas:
-no deben contener secretos. Detener cada servidor con `Ctrl+C`.
+Abrir <http://127.0.0.1:5173>. Con `VITE_API_BASE_URL` vacío, Vite reenvía `/api` al backend
+en `http://127.0.0.1:8000` mediante proxy; `API_PROXY_TARGET` permite cambiar ese destino.
+No sobrescribir un `.env` local existente: revisar sus valores. Las variables `VITE_*` son
+públicas y no deben contener secretos. Detener cada servidor con `Ctrl+C`.
+Ver [dashboard, precisión y caso de referencia](docs/frontend.md).
 
 El frontend se generó con `npm.cmd create vite@9.3.4 frontend -- --template react --no-interactive`.
 No repetir ese comando sobre el proyecto existente. Se conserva Oxlint, incluido por la plantilla,
@@ -98,6 +101,7 @@ Desde `frontend/`:
 ```powershell
 npm.cmd run lint
 npm.cmd run build
+npm.cmd test
 npm.cmd audit
 ```
 
@@ -120,7 +124,7 @@ TestClient. Consultar `AI_PROCESS.md` para los resultados y límites de las veri
 - `docs/architecture.md`: responsabilidades y evolución prevista.
 - `AI_PROCESS.md`: registro verificable de la asistencia de IA en esta etapa.
 
-La API REST se desarrolla en `feature/rest-api`. Las futuras ramas `feature/*` se crearán
+El dashboard se desarrolla en `feature/frontend-dashboard`. Las futuras ramas `feature/*` se crearán
 desde `develop` y se integrarán en ella tras revisión; `main` se reserva para entregas.
 Esta preparación no crea commits ni Pull Requests. El enunciado completo del desafío no está
 incluido; su cobertura deberá revisarse cuando esté disponible.
