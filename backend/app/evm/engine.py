@@ -53,7 +53,6 @@ def _calculate_metrics(
 
 
 def calculate_activity(activity: ActivityInput) -> EVMResult:
-    """Calculate all EVM metrics for one validated activity."""
     return _calculate_metrics(
         bac=activity.bac,
         pv=_value_at_progress(activity.bac, activity.planned_progress),
